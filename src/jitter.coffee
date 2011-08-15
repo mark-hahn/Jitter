@@ -94,7 +94,7 @@ compile= (source, target, options) ->
     continue if item[0] is '.'
     continue if isWatched[sourcePath]
     try
-      if path.extname(sourcePath) is '.coffee'
+      if path.extname(sourcePath)[1..] in options?.extensions.split(',') ? ['coffee']
         readScript sourcePath, target, options
       else if fs.statSync(sourcePath).isDirectory()
         compile sourcePath, target, options
@@ -165,6 +165,7 @@ runTests= ->
 parseOptions= ->
   optionParser= new optparse.OptionParser [
       ['-b', '--bare', 'compile without the top-level function wrapper']
+      ['-e', '--extensions', 'allowed file extensions, e.g. coffee,cof']
   ], BANNER
   options=    optionParser.parse process.argv
   [baseSource, baseTarget, baseTest]= (options.arguments[arg] or '' for arg in [2..4])
